@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://www.springframework.org/schema/security"
+		 xmlns:p="http://www.springframework.org/schema/p"
+		 xmlns:util="http://www.springframework.org/schema/util"
+		 xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<http pattern="/ui/**" security="none"/>
+	<http pattern="/index.jsp" security="none"/>
+	<http pattern="/login.jsp" security="none"/>
+	<http pattern="/logout" security="none"/>
+	<http pattern="/login-failure.jsp" security="none"/>
+	<http pattern="/logout.jsp" security="none"/>
+	<http pattern="/session_timeout.jsp" security="none"/>
+	
+	<http auto-config="true">
+		
+		<csrf disabled="true"/>
+		
+		<intercept-url pattern="/login*" access="permitAll"/>
+		<!-- hasRole('ROLE_USER') 只能放一个属性    hasAnyRole()可以放多个值  -->
+		<intercept-url pattern="/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')"/>
+		
+		<!--  
+		 -->
+		<form-login login-page="/login"  username-parameter="uname" password-parameter="password"
+		authentication-success-handler-ref="loginSuccessHandler"
+		authentication-failure-handler-ref="loginFailureHandler"/>
+
+		<!-- 定义 登出 的 url ，登出后，设置session为无效， 设置登出成功之后跳转的页面 。  登出之后 清除 cookie中的session -->
+		<logout logout-url="/logout" invalidate-session="true" logout-success-url="/logout.jsp" delete-cookies="JSESSIONID" />
+		
+		<!-- web.xml 中配置的session 过期之后，会自动跳转到这个页面，这个页面必须不在security的管理下，否则会跳到登录页面 -->
+		<!-- <session-management invalid-session-url="/session_timeout.jsp" > -->
+		
+			<!-- max-sessions 表示这个系统中，用同一个用户，可以在几个浏览器里登录。如果只配置这个属性，那么，如果已经登录的用户，在其他环境登录时，原来登录的环境会被提示session过期 -->
+			<!--  error-if-maximum-exceeded="true"  如果有max-sessions个用户已经登录，那么下一次登录的用户 会 提示不允许再次登录的提示   -->
+			<!-- <concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/> -->
+		<!-- </session-management> -->
+		
+		<!-- 两种save remember me 的方式，一种是用cookie 一种是通过持久化。 用cookie,只要配置一下 key, 自定义的一个key . cookie会在浏览器中生成一个 remember-me的value value是通过Base64加密的，其中就会有 key值 -->
+		<remember-me key="spring_mvc_model"/>
+	</http>
+	 
+	 <!-- 加盐实现类 -->
+	 <b:bean id="mySaltSource" class="com.tim.spring.security.salt.MySaltSourceImpl"/>
+	 
+	 <!-- 使用数据库 -->
+	<authentication-manager>
+		<authentication-provider user-service-ref="myUserDetailsService">
+		
+			<!--1. 如果密码加密了，需要在这里配置 password-encoder 如果是md5加密的，使用 passowrd-encoder hash='md5' 这里的md5是个枚举类型。如果用大写字母会有以下错误  -->
+			<!-- [bcrypt, plaintext, sha, sha-256, md5, md4, {sha}, {ssha}]', 值 'MD5' 不具有面有效性。它必须是来自枚举的值。 所以，在数据库里保存的密码应该也是小写的md5值-->
+			<password-encoder hash="md5">
+				<!-- 如果程序在加密的时候，进行了加盐（就是在密码后面追加一个常数，如：密码是 tianwei 加盐之后的密码为: tianwei{abc} 其中abc就 是盐值，数据库里存的密码其实是加盐的密码,spring中在这个类里能找到相关加盐处理DaoAuthenticationProvider）
+					加盐有3种方式， system-wide="abc" 这个是加一个常量 。 ref=""实现了Spring接口SaltSource的一个类，在这个类里进行salt的动态生成    user-property="" 使用userDetail里的属性做为盐值(username,最好是一个自定义属性，值 设置为一个随机数据)
+				 -->
+				<salt-source ref="mySaltSource"/>
+				<!-- <salt-source user-property="saltValue"/> -->
+			</password-encoder>
+		</authentication-provider>
+	</authentication-manager>
+	
+	<b:bean id="myUserDetailsService" class="com.tim.spring.service.security.UserLoginJdbcDaoImpl">
+		<b:property name="dataSource" ref="securityDataSource"/>
+	</b:bean>
+	
+	<b:bean id="loginSuccessHandler" class="com.tim.spring.service.security.handler.MyAuthenticationSuccessHandler">
+	</b:bean>
+	<b:bean id="loginFailureHandler" class="com.tim.spring.service.security.handler.MyAuthenticationFailureHandler">
+		<b:property name="defaultFailureUrl" value="/login?error=true"/>
+	</b:bean>
+
+</b:beans>
