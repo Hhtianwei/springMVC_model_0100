@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.User;
 
 public class MyUser extends User
 {
+
 	private String saltValue;
 
 	public MyUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
@@ -16,12 +17,6 @@ public class MyUser extends User
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 		this.saltValue = saltValue;
 	}
-
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8136538469654187150L;
 
 	public String getSaltValue()
 	{

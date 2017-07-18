@@ -14,12 +14,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 <link href="<%=path%>/ui/css/main.css" rel="stylesheet">
 <script type="text/javascript" src="<%=path%>/ui/javascript/jquery/jquery-2.1.1.min.js"></script>
-<script type="text/javascript" src="<%=path%>/ui/javascript/userlist.js"></script>
 
 </head>
 <body>
  登录页面:
- ----${errorMsg }----
+ 		${errorMsg }
  	<c:url var="login" value="/login"/>
 	<form id="login-form" method="post" action="${login}">
 		userName:<input type="text" name="uname"/><br>
