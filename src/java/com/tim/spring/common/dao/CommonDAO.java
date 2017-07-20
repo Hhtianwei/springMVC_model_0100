@@ -138,16 +138,13 @@ public class CommonDAO
 	}
 
 	//pagination data
-	public <T> SearchResult<T> search(String sql, Pagination page)
+	public <T> SearchResult<T> search(String sql, Pagination page, Class clazz)
 	{
 		Session session = this.sessionFactory.getCurrentSession();//.getCurrentSession();
-		Query query = session.createQuery(sql);
+		Query query = session.createSQLQuery(sql).addEntity(clazz);
 		List tempList = query.list();
 		page.setTotalResults(tempList.size());
-		int totalTemp = tempList.size() % page.getPageSize();
-		int totalTemp2 = tempList.size() / page.getPageSize();
-		page.setTotalPages(totalTemp == 0 ? totalTemp2 : (totalTemp2 + 1));
-		query.setFirstResult(page.getCurrentPage() * page.getPageSize());
+		query.setFirstResult((page.getCurrentPage() - 1) * page.getPageSize());
 		query.setMaxResults(page.getPageSize());
 		SearchResult<T> searchResult = new SearchResult<T>();
 		List<T> result = query.list();
@@ -167,7 +164,6 @@ public class CommonDAO
 		page.setTotalResults(tempList.size());
 		int totalTemp = tempList.size() % page.getPageSize();
 		int totalTemp2 = tempList.size() / page.getPageSize();
-		page.setTotalPages(totalTemp == 0 ? totalTemp2 : (totalTemp2 + 1));
 		query.setFirstResult(page.getCurrentPage() * page.getPageSize());
 		query.setMaxResults(page.getPageSize());
 

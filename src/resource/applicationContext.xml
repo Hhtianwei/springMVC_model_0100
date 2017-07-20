@@ -13,10 +13,11 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd"
         default-autowire="byType">
+        
+	<import resource="classpath:connectionDB.xml"/>
+	
 	<context:component-scan base-package="com.tim.spring"/>
 	<aop:aspectj-autoproxy/>
-	
-	<import resource="classpath:connectionDB.xml"/>
 	
 	<bean id="userDao" class="com.tim.spring.dao.impl.UserDaoImpl">
 		<property name="commonDAO" ref="commonDAO"></property>
