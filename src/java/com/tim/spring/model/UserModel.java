@@ -20,6 +20,7 @@ public class UserModel
 	private String mobile;
 	private Date birthday;
 	private String saltValue;
+	private String password;
 
 	public void setId(int id)
 	{
@@ -92,6 +93,17 @@ public class UserModel
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	@Column(name = "password", unique = false, nullable = true)
+	public String getPassword()
+	{
+		return password;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
 	}
 
 }
