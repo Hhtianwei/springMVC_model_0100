@@ -20,6 +20,7 @@
 		
 		<csrf disabled="true"/>
 		
+		<intercept-url pattern="/" access="permitAll"/>
 		<intercept-url pattern="/login*" access="permitAll"/>
 		<!-- hasRole('ROLE_USER') 只能放一个属性    hasAnyRole()可以放多个值  -->
 		<intercept-url pattern="/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')"/>

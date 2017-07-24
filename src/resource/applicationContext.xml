@@ -18,7 +18,7 @@
 	
 	<context:component-scan base-package="com.tim.spring"/>
 	<aop:aspectj-autoproxy/>
-	
+    
 	<bean id="userDao" class="com.tim.spring.dao.impl.UserDaoImpl">
 		<property name="commonDAO" ref="commonDAO"></property>
 	</bean>
@@ -26,5 +26,5 @@
 	<bean id="userService" class="com.tim.spring.service.impl.UserServiceImpl">
 		<property name="userDao" ref="userDao"></property>
 	</bean>
-	
+    
 </beans>
