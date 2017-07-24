@@ -63,6 +63,16 @@
   	<url-pattern>/</url-pattern>
   </servlet-mapping>
   
+  <error-page>
+  	<error-code>404</error-code>
+  	<location>/WEB-INF/errorNotFoundPage.jsp</location>
+  </error-page>
+  
+  <error-page>
+    <error-code>500</error-code>
+    <location>/WEB-INF/serverError.jsp</location>
+	</error-page>
+
   <session-config>
   	<session-timeout>30</session-timeout>
   </session-config>

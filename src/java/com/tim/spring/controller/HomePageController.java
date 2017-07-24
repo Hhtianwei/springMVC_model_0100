@@ -39,6 +39,11 @@ public class HomePageController
 	{
 		String name = request.getParameter("name");
 		LOG.info("请求参数：" + name);
+		if (name.length() < 100)
+		{
+			throw new NullPointerException("这是我做测试专门抛出的异常");
+		}
+
 		return name + ",你好";
 	}
 }
