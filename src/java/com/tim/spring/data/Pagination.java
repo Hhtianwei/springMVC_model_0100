@@ -39,13 +39,13 @@ public class Pagination
 
 	public int getTotalPages()
 	{
+		if (pageSize == 0)
+		{
+			return 0;
+		}
+		int totalTemp = totalResults % pageSize;
+		int totalTemp2 = totalResults / pageSize;
+		totalPages = totalTemp == 0 ? totalTemp2 : (totalTemp2 + 1);
 		return totalPages;
 	}
-
-	public void setTotalPages(int totalPages)
-	{
-		this.totalPages = totalPages;
-	}
-
-
 }

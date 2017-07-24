@@ -1,6 +1,8 @@
 <%@ page language="java" isELIgnored="false" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <%@ taglib prefix='security' uri='http://www.springframework.org/security/tags' %>
 <%
 String path = request.getContextPath();
@@ -17,6 +19,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 </head>
 <body>
+	message:<spring:message code="first.message"/>
+	
+<br>
  登录页面:
  		${errorMsg }
  	<c:url var="login" value="/login"/>
@@ -27,5 +32,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		<br>
 	</form>
+	<br>
+	<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+	
 </body>
 </html>

@@ -12,32 +12,38 @@
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 	<context:component-scan base-package="com.tim.spring.controller" />
-	<mvc:annotation-driven/>
-	
+	<mvc:annotation-driven>
+		<!-- 解决springMVC get 方法中的乱码  （HomePageController.java/testGet）-->
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes" value="text/html;charset=UTF-8" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
 	<!-- 静态资源不走spring,直接去 location这个地址去访问 -->
-	<mvc:resources location="/ui/" mapping="/ui/**"/>
-	
+	<mvc:resources location="/ui/" mapping="/ui/**" />
+
 	<bean id="jspViewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<!-- 加这个，就要加入jstl.jar -->
-		 <property name="viewClass"
+		<property name="viewClass"
 			value="org.springframework.web.servlet.view.JstlView" />
 		<property name="prefix" value="/WEB-INF/views/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
-	
+
 	<!-- 国际化 -->
 	<bean id="messageSource"
-            class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basenames">
-            <list>
-                <value>messages_zh.properties</value>
-            </list>
-        </property>
-        <property name="defaultEncoding" value="UTF-8"/>
-        <property name="cacheSeconds" value="1"/>
-		<property name="fallbackToSystemLocale" value="false"/>
-		<property name="useCodeAsDefaultMessage" value="true" /> 
-    </bean>
-    
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages.hello</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="cacheSeconds" value="1" />
+		<property name="fallbackToSystemLocale" value="false" />
+		<property name="useCodeAsDefaultMessage" value="true" />
+	</bean>
 </beans>
