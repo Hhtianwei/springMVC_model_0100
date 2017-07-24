@@ -1,11 +1,13 @@
 package com.tim.spring.controller;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tim.spring.data.Pagination;
 import com.tim.spring.data.SearchResult;
@@ -28,6 +29,10 @@ public class LoginPageController
 
 	@Resource(name = "userService")
 	private UserService userService;
+
+	@Resource
+	private MessageSource messageSource;
+
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String testGet(HttpServletRequest request, HttpServletResponse response,
@@ -50,16 +55,10 @@ public class LoginPageController
 			}
 			model.addAttribute("errorMsg", errorMsg);
 		}
-		return "login/login";
-	}
 
-	@RequestMapping(value = "/testGet", method = RequestMethod.GET)
-	@ResponseBody
-	public String testGet(String filePath, Model model, HttpServletRequest request, HttpServletResponse response)
-	{
-		String name = request.getParameter("name");
-		System.out.println("请求参数：" + name);
-		return name + ",你好";
+		String x1 = messageSource.getMessage("first.message", null, "default1", Locale.CHINA);
+		System.out.println("x11111:" + x1);
+		return "login/login";
 	}
 
 	@RequestMapping(value = "/addUsers", method = RequestMethod.GET)
