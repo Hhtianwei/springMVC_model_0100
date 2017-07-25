@@ -50,29 +50,48 @@
 	 <b:bean id="mySaltSource" class="com.tim.spring.security.salt.MySaltSourceImpl"/>
 	 
 	 <!-- 使用数据库 -->
-	<authentication-manager>
+	<!-- <authentication-manager>
 		<authentication-provider user-service-ref="myUserDetailsService">
 		
-			<!--1. 如果密码加密了，需要在这里配置 password-encoder 如果是md5加密的，使用 passowrd-encoder hash='md5' 这里的md5是个枚举类型。如果用大写字母会有以下错误  -->
-			<!-- [bcrypt, plaintext, sha, sha-256, md5, md4, {sha}, {ssha}]', 值 'MD5' 不具有面有效性。它必须是来自枚举的值。 所以，在数据库里保存的密码应该也是小写的md5值-->
+			1. 如果密码加密了，需要在这里配置 password-encoder 如果是md5加密的，使用 passowrd-encoder hash='md5' 这里的md5是个枚举类型。如果用大写字母会有以下错误 
+			[bcrypt, plaintext, sha, sha-256, md5, md4, {sha}, {ssha}]', 值 'MD5' 不具有面有效性。它必须是来自枚举的值。 所以，在数据库里保存的密码应该也是小写的md5值
 			<password-encoder hash="md5">
-				<!-- 如果程序在加密的时候，进行了加盐（就是在密码后面追加一个常数，如：密码是 tianwei 加盐之后的密码为: tianwei{abc} 其中abc就 是盐值，数据库里存的密码其实是加盐的密码,spring中在这个类里能找到相关加盐处理DaoAuthenticationProvider）
+				如果程序在加密的时候，进行了加盐（就是在密码后面追加一个常数，如：密码是 tianwei 加盐之后的密码为: tianwei{abc} 其中abc就 是盐值，数据库里存的密码其实是加盐的密码,spring中在这个类里能找到相关加盐处理DaoAuthenticationProvider）
 					加盐有3种方式， system-wide="abc" 这个是加一个常量 。 ref=""实现了Spring接口SaltSource的一个类，在这个类里进行salt的动态生成    user-property="" 使用userDetail里的属性做为盐值(username,最好是一个自定义属性，值 设置为一个随机数据)
-				 -->
+				
 				<salt-source ref="mySaltSource"/>
-				<!-- <salt-source user-property="saltValue"/> -->
+				<salt-source user-property="saltValue"/>
 			</password-encoder>
 		</authentication-provider>
+	</authentication-manager> -->
+	
+	<authentication-manager>
+		<authentication-provider ref="myAuthenticationProvider"/>
 	</authentication-manager>
 	
-	<b:bean id="myUserDetailsService" class="com.tim.spring.service.security.UserLoginJdbcDaoImpl">
+	<b:bean id="myAuthenticationProvider" class="com.tim.spring.security.provider.MyAuthenticationProvider">
+		<b:property name="userDetailsService" ref="myUserDetailsService"/>
+		<b:property name="saltSource" ref="mySaltSource"/>
+		<b:property name="bruteForceAttackCounter" ref="bruteForceAttackCounter"/>
+		<b:property name="hideUserNotFoundExceptions" value="false"></b:property>
+	</b:bean>
+	
+	<!-- 登录错误用户计数-->
+    <b:bean id="bruteForceAttackCounter" class="com.tim.spring.security.impl.DefaultBruteForceAttackCounter">
+    	<b:constructor-arg name="maxFailedLogins" value="10" />
+        <b:constructor-arg name="cacheExpiration" value="20" />
+        <b:constructor-arg name="cacheSizeLimit" value="1000" />
+    </b:bean>
+	
+	<b:bean id="myUserDetailsService" class="com.tim.spring.security.dao.UserLoginJdbcDaoImpl">
 		<b:property name="dataSource" ref="securityDataSource"/>
 	</b:bean>
 	
-	<b:bean id="loginSuccessHandler" class="com.tim.spring.service.security.handler.MyAuthenticationSuccessHandler">
+	<b:bean id="loginSuccessHandler" class="com.tim.spring.security.handler.MyAuthenticationSuccessHandler">
 	</b:bean>
-	<b:bean id="loginFailureHandler" class="com.tim.spring.service.security.handler.MyAuthenticationFailureHandler">
+	<b:bean id="loginFailureHandler" class="com.tim.spring.security.handler.MyAuthenticationFailureHandler">
 		<b:property name="defaultFailureUrl" value="/login?error=true"/>
+		<b:property name="bruteForceAttackCounter" ref="bruteForceAttackCounter"/>
 	</b:bean>
 
 </b:beans>

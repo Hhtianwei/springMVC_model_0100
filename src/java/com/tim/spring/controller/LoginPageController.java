@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.tim.spring.data.Pagination;
 import com.tim.spring.data.SearchResult;
 import com.tim.spring.model.UserModel;
+import com.tim.spring.security.exception.AttackSystemException;
 import com.tim.spring.service.UserService;
 
 
@@ -27,6 +29,7 @@ import com.tim.spring.service.UserService;
 public class LoginPageController
 {
 
+	private static final Logger LOG = Logger.getLogger(LoginPageController.class);
 	@Resource(name = "userService")
 	private UserService userService;
 
@@ -46,18 +49,23 @@ public class LoginPageController
 			if (loginException instanceof BadCredentialsException)
 			{
 				errorMsg = "password error";
-				System.out.println("password error");
+				LOG.error(String.format("user password error"));
 			}
 			if (loginException instanceof UsernameNotFoundException)
 			{
 				errorMsg = "user name is not found";
-				System.out.println("user name is not found");
+				LOG.error(String.format("user name is not found"));
+			}
+			if (loginException instanceof AttackSystemException)
+			{
+				errorMsg = "user attack system,can't login";
+				LOG.error(String.format("user[%s] attack system,can't login"));
 			}
 			model.addAttribute("errorMsg", errorMsg);
 		}
 
 		String x1 = messageSource.getMessage("first.message", null, "default1", Locale.CHINA);
-		System.out.println("x11111:" + x1);
+		LOG.info("test i18n message:" + x1);
 		return "login/login";
 	}
 
