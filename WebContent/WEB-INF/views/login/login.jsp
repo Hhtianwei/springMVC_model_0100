@@ -19,11 +19,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 </head>
 <body>
-	message:<spring:message code="first.message"/>
+	test message:<spring:message code="first.message"/>
 	
 <br>
  登录页面:
- 		${errorMsg }
+ 		<c:if test="${not empty errorMsg}">
+ 			<font color="red">${errorMsg }</font>
+ 		</c:if>
  	<c:url var="login" value="/login"/>
 	<form id="login-form" method="post" action="${login}">
 		userName:<input type="text" name="uname"/><br>

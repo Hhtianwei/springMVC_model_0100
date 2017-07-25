@@ -1,4 +1,4 @@
-package com.tim.spring.service.security;
+package com.tim.spring.security.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
