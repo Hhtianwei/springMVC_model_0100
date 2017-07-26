@@ -18,21 +18,21 @@
 	
 	<http auto-config="true">
 		
-		<csrf disabled="true"/>
+		<!-- <csrf disabled="true"/> -->
 		
 		<intercept-url pattern="/" access="permitAll"/>
+		<intercept-url pattern="/logoutsystem" access="permitAll"/>
 		<intercept-url pattern="/login*" access="permitAll"/>
+		
 		<!-- hasRole('ROLE_USER') 只能放一个属性    hasAnyRole()可以放多个值  -->
 		<intercept-url pattern="/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')"/>
 		
-		<!--  
-		 -->
 		<form-login login-page="/login"  username-parameter="uname" password-parameter="password"
 		authentication-success-handler-ref="loginSuccessHandler"
 		authentication-failure-handler-ref="loginFailureHandler"/>
 
 		<!-- 定义 登出 的 url ，登出后，设置session为无效， 设置登出成功之后跳转的页面 。  登出之后 清除 cookie中的session -->
-		<logout logout-url="/logout" invalidate-session="true" logout-success-url="/logout.jsp" delete-cookies="JSESSIONID" />
+		<logout logout-url="/logout2" invalidate-session="true" logout-success-url="/logoutsystem" delete-cookies="JSESSIONID" />
 		
 		<!-- web.xml 中配置的session 过期之后，会自动跳转到这个页面，这个页面必须不在security的管理下，否则会跳到登录页面 -->
 		<!-- <session-management invalid-session-url="/session_timeout.jsp" > -->
@@ -43,8 +43,13 @@
 		<!-- </session-management> -->
 		
 		<!-- 两种save remember me 的方式，一种是用cookie 一种是通过持久化。 用cookie,只要配置一下 key, 自定义的一个key . cookie会在浏览器中生成一个 remember-me的value value是通过Base64加密的，其中就会有 key值 -->
-		<remember-me key="spring_mvc_model"/>
+		<remember-me key="spring_mvc_model" services-ref="myRememberMeServices"/>
 	</http>
+	
+	<b:bean id="myRememberMeServices" class="com.tim.spring.security.remremberme.handler.MyRememberMeServices">
+		<b:constructor-arg name="key" value="spring_mvc_model"/>
+		<b:constructor-arg name="userDetailsService" ref="myUserDetailsService"/>
+	</b:bean>
 	 
 	 <!-- 加盐实现类 -->
 	 <b:bean id="mySaltSource" class="com.tim.spring.security.salt.MySaltSourceImpl"/>
@@ -73,8 +78,11 @@
 		<b:property name="userDetailsService" ref="myUserDetailsService"/>
 		<b:property name="saltSource" ref="mySaltSource"/>
 		<b:property name="bruteForceAttackCounter" ref="bruteForceAttackCounter"/>
-		<b:property name="hideUserNotFoundExceptions" value="false"></b:property>
+		<b:property name="hideUserNotFoundExceptions" value="false"/>
+		<b:property name="passwordEncoder" ref="myMD5PasswordEncoder"/>
 	</b:bean>
+	
+	<b:bean id="myMD5PasswordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
 	
 	<!-- 登录错误用户计数-->
     <b:bean id="bruteForceAttackCounter" class="com.tim.spring.security.impl.DefaultBruteForceAttackCounter">
@@ -88,7 +96,9 @@
 	</b:bean>
 	
 	<b:bean id="loginSuccessHandler" class="com.tim.spring.security.handler.MyAuthenticationSuccessHandler">
+		<b:property name="bruteForceAttackCounter" ref="bruteForceAttackCounter"/>
 	</b:bean>
+	
 	<b:bean id="loginFailureHandler" class="com.tim.spring.security.handler.MyAuthenticationFailureHandler">
 		<b:property name="defaultFailureUrl" value="/login?error=true"/>
 		<b:property name="bruteForceAttackCounter" ref="bruteForceAttackCounter"/>

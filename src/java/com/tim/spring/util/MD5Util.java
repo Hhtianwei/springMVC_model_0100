@@ -74,7 +74,7 @@ public class MD5Util
 	}
 
 	public static void main(String[] args)
-	{
+	{//e4774cdda0793f86414e8b9140bb6db4
 		System.out.println(MD5Util.MD5("u1"));//E4774CDDA0793F86414E8B9140BB6DB4
 		System.out.println(MD5Util.MD5("1{e4774cdda0793f86414e8b9140bb6db4}"));
 	}

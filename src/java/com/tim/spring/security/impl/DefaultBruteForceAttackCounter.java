@@ -94,7 +94,11 @@ public class DefaultBruteForceAttackCounter
 	{
 		if (StringUtils.isNotEmpty(userName))
 		{
-			failureMap.remove(userName);
+			if (failureMap.containsKey(userName))
+			{
+				failureMap.remove(userName);
+			}
+
 		}
 	}
 

@@ -69,6 +69,13 @@ public class LoginPageController
 		return "login/login";
 	}
 
+	@RequestMapping(value = "/logoutsystem", method = RequestMethod.GET)
+	public String logout(Model model, HttpServletRequest request, HttpServletResponse response)
+	{
+		LOG.info("---user logout-----");
+		return "login/logout";
+	}
+
 	@RequestMapping(value = "/addUsers", method = RequestMethod.GET)
 	public void addUser(Model model, HttpServletRequest request, HttpServletResponse response)
 	{

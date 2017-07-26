@@ -30,6 +30,8 @@ public class HomePageController
 		LOG.info("loading home/index.jsp page...");
 		String message = messageSource.getMessage("first.message", null, Locale.CHINA);
 		LOG.info("test i18n file message:" + message);
+		String userName = (String) request.getSession().getAttribute("userName");
+		LOG.info("index page userName-------------------" + userName + "----");
 		return "home/index";
 	}
 
@@ -45,5 +47,13 @@ public class HomePageController
 		}
 
 		return name + ",你好";
+	}
+
+	@RequestMapping(value = "/testHello", method = RequestMethod.GET)
+	public String testHello(Model model, HttpServletRequest request, HttpServletResponse response)
+	{
+		model.addAttribute("message", "this is a test message");
+		LOG.info("test get method ");
+		return "test/test01";
 	}
 }
