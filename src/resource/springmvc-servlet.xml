@@ -21,8 +21,10 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
+	<!-- 加入interceptor -->
 	<mvc:interceptors>
 		<mvc:interceptor>
+			<!-- 要过滤的url,一定要先写 -->
 			<mvc:mapping path="/**"/>
 			<bean class="com.tim.spring.interceptor.DefaultInterceptor">
 				<property name="deviceService" ref="deviceService"/>
