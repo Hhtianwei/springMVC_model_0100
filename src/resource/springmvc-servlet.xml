@@ -21,6 +21,15 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.tim.spring.interceptor.DefaultInterceptor">
+				<property name="deviceService" ref="deviceService"/>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
 	<!-- 静态资源不走spring,直接去 location这个地址去访问 -->
 	<mvc:resources location="/ui/" mapping="/ui/**" />
 
