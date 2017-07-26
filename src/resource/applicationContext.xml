@@ -26,5 +26,12 @@
 	<bean id="userService" class="com.tim.spring.service.impl.UserServiceImpl">
 		<property name="userDao" ref="userDao"></property>
 	</bean>
+	
+	<bean id="deviceService" class="com.tim.spring.service.device.DeviceService">
+		<property name="deviceResolver">
+			<bean class="org.springframework.mobile.device.LiteDeviceResolver"/>
+		</property>
+	</bean>
+	
     
 </beans>

@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.tim.spring.device.data.DeviceData;
+import com.tim.spring.service.device.DeviceService;
+
 
 @Controller
 @RequestMapping("/")
@@ -24,6 +27,9 @@ public class HomePageController
 	@Resource
 	private MessageSource messageSource;
 
+	@Resource
+	private DeviceService deviceService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String index(Model model, HttpServletRequest request, HttpServletResponse response)
 	{
@@ -32,6 +38,11 @@ public class HomePageController
 		LOG.info("test i18n file message:" + message);
 		String userName = (String) request.getSession().getAttribute("userName");
 		LOG.info("index page userName-------------------" + userName + "----");
+
+		//设备类型
+		DeviceData deviceData = deviceService.getDeviceData();
+		LOG.info("device type:Agent:" + deviceData.getUserAgent() + ", Mobile:" + deviceData.getMobileBrowser() + ",Desktop:"
+				+ deviceData.getDesktopBrowser() + ",Tablet:" + deviceData.getTabletBrowser());
 		return "home/index";
 	}
 
