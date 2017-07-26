@@ -65,12 +65,12 @@
   
   <error-page>
   	<error-code>404</error-code>
-  	<location>/WEB-INF/errorNotFoundPage.jsp</location>
+  	<location>/WEB-INF/views/error/errorNotFoundPage.jsp</location>
   </error-page>
   
   <error-page>
     <error-code>500</error-code>
-    <location>/WEB-INF/serverError.jsp</location>
+    <location>/WEB-INF/views/error/serverError.jsp</location>
 	</error-page>
 
   <session-config>
