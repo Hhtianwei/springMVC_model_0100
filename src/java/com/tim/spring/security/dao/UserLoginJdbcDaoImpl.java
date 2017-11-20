@@ -79,7 +79,7 @@ public class UserLoginJdbcDaoImpl extends JdbcDaoImpl
 	protected List loadUsersByUsername(String username)
 	{
 		return getJdbcTemplate().query(USERS_BY_USERNAME_QUERY, new String[]
-		{ username }, new RowMapper()
+		{ username }, new RowMapper<Object>()
 		{
 			public UserDetails mapRow(ResultSet rs, int rowNum) throws SQLException
 			{

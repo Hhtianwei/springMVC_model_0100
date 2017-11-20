@@ -1,6 +1,8 @@
 package com.tim.spring.security.handler;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import com.tim.spring.security.impl.DefaultBruteForceAttackCounter;
@@ -23,6 +26,13 @@ public class MyAuthenticationSuccessHandler extends SavedRequestAwareAuthenticat
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException
 	{
+		String name = authentication.getName();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+		while (iter.hasNext())
+		{
+			LOG.info("------name：" + name + ",auth:" + iter.next() + "--------------------");
+		}
 
 		String userName = request.getParameter("uname");
 		LOG.info("my MyAuthenticationSuccessHandler invoke...userName is :" + userName);

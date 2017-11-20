@@ -13,7 +13,7 @@
 
 	<context:component-scan base-package="com.tim.spring.controller" />
 	<mvc:annotation-driven>
-		<!-- 解决springMVC get 方法中的乱码  （HomePageController.java/testGet）-->
+		<!-- 解决springMVC get 方法中的乱码 （HomePageController.java/testGet） -->
 		<mvc:message-converters register-defaults="true">
 			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
 				<property name="supportedMediaTypes" value="text/html;charset=UTF-8" />
@@ -25,13 +25,13 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<!-- 要过滤的url,一定要先写 -->
-			<mvc:mapping path="/**"/>
+			<mvc:mapping path="/**" />
 			<bean class="com.tim.spring.interceptor.DefaultInterceptor">
-				<property name="deviceService" ref="deviceService"/>
+				<property name="deviceService" ref="deviceService" />
 			</bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
-	
+
 	<!-- 静态资源不走spring,直接去 location这个地址去访问 -->
 	<mvc:resources location="/ui/" mapping="/ui/**" />
 
@@ -57,4 +57,8 @@
 		<property name="fallbackToSystemLocale" value="false" />
 		<property name="useCodeAsDefaultMessage" value="true" />
 	</bean>
+
+
+	
+	
 </beans>

@@ -36,6 +36,16 @@
       <url-pattern>/*</url-pattern>  
   </filter-mapping>
    
+   <!-- 文件上传过滤，一定要在security 之前 -->
+   <filter>
+	<filter-name>MultipartFilter</filter-name>
+	<filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>MultipartFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+   
    <!-- spring security 过滤设置 -->
    <filter>
 		<filter-name>springSecurityFilterChain</filter-name>
@@ -69,6 +79,11 @@
   </error-page>
   
   <error-page>
+    <error-code>403</error-code>
+    <location>/WEB-INF/views/error/accessDenied.jsp</location>
+	</error-page>
+	
+  <error-page>
     <error-code>500</error-code>
     <location>/WEB-INF/views/error/serverError.jsp</location>
 	</error-page>
@@ -76,4 +91,5 @@
   <session-config>
   	<session-timeout>30</session-timeout>
   </session-config>
+  
 </web-app>

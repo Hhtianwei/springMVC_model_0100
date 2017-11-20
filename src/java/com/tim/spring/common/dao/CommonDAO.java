@@ -21,6 +21,18 @@ import com.tim.spring.data.SearchResult;
 public class CommonDAO
 {
 
+	private String name;
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
 	private SessionFactory sessionFactory;
 
 	private JdbcTemplate jdbcTemplate;

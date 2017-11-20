@@ -12,15 +12,16 @@
         http://www.springframework.org/schema/aop 
         http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+	<context:property-placeholder location="classpath:db.properties"/>
 	<alias name="dataSource" alias="securityDataSource"/>
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<!-- Connection Info -->
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="driverClassName" value="${test.driver}" />
 		<property name="url"
-			value="jdbc:mysql://localhost:3306/demo1?useUnicode=true&amp;characterEncoding=utf-8" />
-		<property name="username" value="root" />
-		<property name="password" value="root" />
+			value="${test.url}" />
+		<property name="username" value="${test.password}" />
+		<property name="password" value="${test.password}" />
 
 		<!-- Connection Pooling Info -->
 		<!-- <property name="maxActive" value="${dbcp.maxActive}" /> -->
@@ -88,6 +89,7 @@
 	<bean id="commonDAO" class="com.tim.spring.common.dao.CommonDAO">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+		<property name="name" value="${test.password}"></property>
 	</bean>
 	
 </beans>

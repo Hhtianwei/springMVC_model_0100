@@ -33,5 +33,18 @@
 		</property>
 	</bean>
 	
-    
+    	<!-- 上传文件 -->
+    	<!--这个bean 会被filter【MultipartFilter】读取 ，这个filter里写死了resolver的名字，一定要叫filterMultipartResolver，
+    		否则需要覆盖MultipartFilter，然后修改他的getMultipartResolverBeanName方法。
+    		读取这个bean时，会从webApplicationContext中取，所以，一定要放在这里。如果放在springmvc中，会找不到。
+    		如果没有这个resolver他会创建一个默认的resolver,那个只能上传最大2M的文件。
+    	-->
+	<bean id="filterMultipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8" /> <!-- 默认编码 (ISO-8859-1) -->
+		<property name="maxInMemorySize" value="-1" /> <!-- 最大内存大小 (10240) -->
+		<property name="uploadTempDir" value="/upload/" /> <!-- 上传后的目录名 (WebUtils#TEMP_DIR_CONTEXT_ATTRIBUTE) -->
+		<property name="maxUploadSize" value="-1" /> <!-- 最大文件大小，-1为无限止(-1) -->
+		<property name="maxUploadSizePerFile" value="-1"></property>
+	</bean>
 </beans>

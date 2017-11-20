@@ -15,7 +15,7 @@
 	<http pattern="/login-failure.jsp" security="none"/>
 	<http pattern="/logout.jsp" security="none"/>
 	<http pattern="/session_timeout.jsp" security="none"/>
-	
+
 	<http auto-config="true">
 		
 		<!-- <csrf disabled="true"/> -->
@@ -23,6 +23,11 @@
 		<intercept-url pattern="/" access="permitAll"/>
 		<intercept-url pattern="/logoutsystem" access="permitAll"/>
 		<intercept-url pattern="/login*" access="permitAll"/>
+		
+		<intercept-url pattern="/testHello2" access="hasRole('ROLE_USER')"/>
+		<intercept-url pattern="/testHello3" access="hasRole('ROLE_ADMIN')"/>
+		
+		<intercept-url pattern="/testUpload" access="permitAll"/>
 		
 		<!-- hasRole('ROLE_USER') 只能放一个属性    hasAnyRole()可以放多个值  -->
 		<intercept-url pattern="/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')"/>
