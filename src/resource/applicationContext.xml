@@ -15,9 +15,19 @@
         default-autowire="byType">
         
 	<import resource="classpath:connectionDB.xml"/>
-	
+	<import resource="classpath:test.xml"/>
 	<context:component-scan base-package="com.tim.spring"/>
 	<aop:aspectj-autoproxy/>
+	
+	<bean id="config" class="com.tim.spring.common.config.Config"></bean>
+    
+    <alias name="myFileAlterationMonitor2" alias="myFileAlterationMonitor3"/>
+	<bean id="myFileAlterationMonitor2" parent="myFileAlterationMonitor">
+    	<property name="fileWatchfilter" ref="watchedPhotoFilter"/>
+    	<property name="watchedPath" value="E:\tianwei\imageTest"></property>
+    </bean>
+    
+    <bean id="watchedPhotoFilter" class="com.tim.spring.common.filter.WatchedPhotoFilter"></bean>
     
 	<bean id="userDao" class="com.tim.spring.dao.impl.UserDaoImpl">
 		<property name="commonDAO" ref="commonDAO"></property>
@@ -43,8 +53,10 @@
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="defaultEncoding" value="utf-8" /> <!-- 默认编码 (ISO-8859-1) -->
 		<property name="maxInMemorySize" value="-1" /> <!-- 最大内存大小 (10240) -->
-		<property name="uploadTempDir" value="/upload/" /> <!-- 上传后的目录名 (WebUtils#TEMP_DIR_CONTEXT_ATTRIBUTE) -->
+		<!-- <property name="uploadTempDir" value="/upload/" /> --> <!-- 上传后的目录名 (WebUtils#TEMP_DIR_CONTEXT_ATTRIBUTE) -->
 		<property name="maxUploadSize" value="-1" /> <!-- 最大文件大小，-1为无限止(-1) -->
 		<property name="maxUploadSizePerFile" value="-1"></property>
 	</bean>
+	
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
 </beans>

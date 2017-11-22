@@ -89,7 +89,6 @@
 	<bean id="commonDAO" class="com.tim.spring.common.dao.CommonDAO">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
-		<property name="name" value="${test.password}"></property>
 	</bean>
 	
 </beans>
