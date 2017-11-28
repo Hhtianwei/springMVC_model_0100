@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
+import com.tim.spring.security.exception.SMSErrorAuthenticationexception;
 import com.tim.spring.security.impl.DefaultBruteForceAttackCounter;
 
 
@@ -25,6 +26,11 @@ public class MyAuthenticationFailureHandler extends SimpleUrlAuthenticationFailu
 			AuthenticationException authenticationException) throws IOException, ServletException
 	{
 		String userName = request.getParameter("uname");
+		if (authenticationException instanceof SMSErrorAuthenticationexception)
+		{
+			userName = request.getParameter("mobile");
+		}
+
 		LOG.error("-----login failure user :" + userName);
 		bruteForceAttackCounter.addFailureUser(userName);
 		super.onAuthenticationFailure(request, response, authenticationException);

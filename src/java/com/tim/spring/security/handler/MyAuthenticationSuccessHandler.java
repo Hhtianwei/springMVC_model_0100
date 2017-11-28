@@ -34,12 +34,11 @@ public class MyAuthenticationSuccessHandler extends SavedRequestAwareAuthenticat
 			LOG.info("------name：" + name + ",auth:" + iter.next() + "--------------------");
 		}
 
-		String userName = request.getParameter("uname");
-		LOG.info("my MyAuthenticationSuccessHandler invoke...userName is :" + userName);
-		bruteForceAttackCounter.removeLoginFailureUser(userName);
+		LOG.info("my MyAuthenticationSuccessHandler invoke...userName is :" + name);
+		bruteForceAttackCounter.removeLoginFailureUser(name);
 
 		//TODO save userInfo to session 
-		request.getSession().setAttribute("userName", userName);
+		request.getSession().setAttribute("userName", name);
 
 		super.onAuthenticationSuccess(request, response, authentication);
 	}

@@ -16,7 +16,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 <link href="<%=path%>/ui/css/main.css" rel="stylesheet">
 <script type="text/javascript" src="<%=path%>/ui/javascript/jquery/jquery-2.1.1.min.js"></script>
-
+<script type="text/javascript">
+	$(function(){
+		$("a.getSMScode").on("click",function(){
+			$.ajax({
+				url:"createSMScode",
+				type:"get",
+				success:function(){
+					
+				}
+			});
+		});
+	});
+</script>
 </head>
 <body>
 	test message:<spring:message code="first.message"/>
@@ -26,6 +38,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
  		<c:if test="${not empty errorMsg}">
  			<font color="red">${errorMsg }</font>
  		</c:if>
+ 		
+ 		<hr>
+ 		<br>
+ 		
  	<c:url var="login" value="/login"/>
 	<form id="login-form" method="post" action="${login}">
 		userName:<input type="text" name="uname"/><br>
@@ -39,7 +55,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<br>
 	</form>
 	<br>
-	<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<hr>
+<br>
+	<h2>短信登录</h2>
+
+	<c:url var="smsLogin" value="/smsLogin"/>
+	<c:url var="createSMScode" value="/createSMScode"/>
+	
+	<form action="${smsLogin }" method="post">
+		手机号:<input type="text" name="mobile" value="18201997620"/><a class="getSMScode" href="javascript:void();">获取验证码</a><br>
+		短信验证码：<input type="text" name="smsCode"/><br>
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		<input type="submit" value="登录"/>
+	</form>
+<hr>
+<br>
 	
 </body>
 </html>

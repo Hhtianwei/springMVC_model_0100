@@ -22,6 +22,7 @@ import com.tim.spring.data.Pagination;
 import com.tim.spring.data.SearchResult;
 import com.tim.spring.model.UserModel;
 import com.tim.spring.security.exception.AttackSystemException;
+import com.tim.spring.security.exception.SMSErrorAuthenticationexception;
 import com.tim.spring.service.UserService;
 
 
@@ -49,17 +50,26 @@ public class LoginPageController
 			if (loginException instanceof BadCredentialsException)
 			{
 				errorMsg = "password error";
-				LOG.error(String.format("user password error"));
+				String name = request.getParameter("uname");
+				LOG.error(String.format("user[%s] password error", name));
 			}
 			if (loginException instanceof UsernameNotFoundException)
 			{
 				errorMsg = "user name is not found";
-				LOG.error(String.format("user name is not found"));
+				String name = request.getParameter("uname");
+				LOG.error(String.format("user[%s] name is not found", name));
 			}
 			if (loginException instanceof AttackSystemException)
 			{
 				errorMsg = "user attack system,can't login";
-				LOG.error(String.format("user[%s] attack system,can't login"));
+				String name = request.getParameter("uname");
+				LOG.error(String.format("user[%s] attack system,can't login", name));
+			}
+			if (loginException instanceof SMSErrorAuthenticationexception)
+			{
+				errorMsg = loginException.getMessage();
+				String mobile = request.getParameter("mobile");
+				LOG.error(String.format("user[%s] sms code error,can't login", mobile));
 			}
 			model.addAttribute("errorMsg", errorMsg);
 		}
