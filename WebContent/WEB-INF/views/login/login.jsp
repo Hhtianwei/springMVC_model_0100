@@ -46,7 +46,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<form id="login-form" method="post" action="${login}">
 		userName:<input type="text" name="uname"/><br>
 		password:<input type="password" name="password"/><br>
-		<br>
+		<br><br>
 		remember-me:<input type="checkbox" name="remember-me"/>
 		<br>
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
