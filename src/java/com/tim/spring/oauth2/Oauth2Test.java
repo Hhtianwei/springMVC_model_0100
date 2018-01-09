@@ -3,8 +3,6 @@ package com.tim.spring.oauth2;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tim.http.HttpClient;
-
 import net.sf.json.JSONObject;
 
 
