@@ -61,18 +61,19 @@ public class HomePageController
 		LOG.info("请求参数：" + name);
 		if (name.length() < 100)
 		{
-			throw new NullPointerException("这是我做测试专门抛出的异常");
+			//throw new NullPointerException("这是我做测试专门抛出的异常");
 		}
 
 		return name + ",你好";
 	}
 
 	@RequestMapping(value = "/testHello", method = RequestMethod.GET)
+	@ResponseBody
 	public String testHello(Model model, HttpServletRequest request, HttpServletResponse response)
 	{
 		model.addAttribute("message", "this is a test message");
 		LOG.info("test get method ");
-		return "test/test01";
+		return "test page ,hello";
 	}
 
 	/**

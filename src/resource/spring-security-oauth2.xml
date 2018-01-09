@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<oauth2:client-details-service id="clientDetailsService">
+		<oauth2:client client-id="mobile_1"
+			authorized-grant-types="password,authorization_code,client_credentials,refresh_token,implicit"
+			secret="secret_1"
+			scope="read,write,trust" 
+			resource-ids="mobile-resource,client-resource"
+			authorities="ROLE_OAUTH"/>
+	</oauth2:client-details-service>
+	<b:bean id="oauth2ClientDetailsUserService"
+		class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+		<b:constructor-arg ref="clientDetailsService" />
+	</b:bean>
+	<authentication-manager id="oauth2AuthenticationManager">
+		<authentication-provider user-service-ref="oauth2ClientDetailsUserService" />
+	</authentication-manager>
+
+	<http pattern="/oauth/token" create-session="stateless"
+		authentication-manager-ref="oauth2AuthenticationManager"
+		entry-point-ref="oauth2AuthenticationEntryPoint">
+		<csrf disabled="true" />
+		<intercept-url pattern="/oauth/token" />
+		<anonymous enabled="false" />
+		<http-basic entry-point-ref="oauth2AuthenticationEntryPoint" />
+		<custom-filter ref="clientCredentialsTokenEndpointFilter"
+			before="BASIC_AUTH_FILTER" />
+		<access-denied-handler ref="oauth2AccessDeniedHandler" />
+	</http>
+
+	<b:bean id="tokenStore"
+		class="org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore" />
+	<b:bean id="tokenServices"
+		class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
+		<b:property name="tokenStore" ref="tokenStore" />
+		<b:property name="supportRefreshToken" value="true" />
+		<b:property name="accessTokenValiditySeconds" value="3600"></b:property>
+	</b:bean>
+
+	<b:bean id="oauth2AuthenticationEntryPoint"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint" />
+	<b:alias name="myoauth2AuthenticationEntryPoint" alias="oauth2AuthenticationEntryPoint" />
+	<b:bean id="myoauth2AuthenticationEntryPoint"
+		class="com.tim.spring.oauth2.MyOAuth2AuthenticationEntryPoint" />
+
+	<b:bean id="oauth2AccessDeniedHandler"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
+	<b:bean id="oauthUserApprovalHandler"
+		class="org.springframework.security.oauth2.provider.approval.DefaultUserApprovalHandler" />
+
+	<b:bean id="oauth2AccessDecisionManager"
+		class="org.springframework.security.access.vote.UnanimousBased">
+		<b:constructor-arg>
+			<b:list>
+				<b:bean
+					class="org.springframework.security.oauth2.provider.vote.ScopeVoter" />
+				<b:bean class="org.springframework.security.access.vote.RoleVoter" />
+				<b:bean
+					class="org.springframework.security.access.vote.AuthenticatedVoter" />
+				<b:bean
+					class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+	<oauth2:authorization-server
+		client-details-service-ref="clientDetailsService" 
+		token-services-ref="tokenServices"
+		user-approval-handler-ref="oauthUserApprovalHandler">
+		<oauth2:authorization-code />
+		<oauth2:implicit />
+		<oauth2:refresh-token />
+		<oauth2:client-credentials />
+		<oauth2:password disabled="false" />
+	</oauth2:authorization-server>
+
+	<b:bean id="clientCredentialsTokenEndpointFilter"
+		class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
+		<b:property name="authenticationManager" ref="oauth2AuthenticationManager" />
+	</b:bean>
+
+	<oauth2:resource-server id="mobileResourceServer"
+		resource-id="mobile-resource" token-services-ref="tokenServices" />
+
+	<oauth2:resource-server id="clientResourceServer"
+		resource-id="client-resource" token-services-ref="tokenServices" />
+
+
+	<http pattern="/order/**" create-session="never"
+		entry-point-ref="oauth2AuthenticationEntryPoint"
+		access-decision-manager-ref="oauth2AccessDecisionManager">
+
+		<intercept-url pattern="/order/*" access="hasRole('ROLE_OAUTH')" />
+
+		<anonymous enabled="false" />
+		<custom-filter ref="mobileResourceServer" before="PRE_AUTH_FILTER" />
+
+		<access-denied-handler ref="oauth2AccessDeniedHandler" />
+	</http>
+
+	<http pattern="/product/**" create-session="never"
+		entry-point-ref="oauth2AuthenticationEntryPoint"
+		access-decision-manager-ref="oauth2AccessDecisionManager">
+
+		<!-- 如果要加权限，应该在 mobile_1 上进行设置 -->
+		<!-- <intercept-url pattern="/product/*" access="hasRole('ROLE_OAUTH')" /> -->
+
+		<anonymous enabled="false" />
+
+		<custom-filter ref="clientResourceServer" before="PRE_AUTH_FILTER" />
+
+		<access-denied-handler ref="oauth2AccessDeniedHandler" />
+	</http>
+
+</b:beans>
