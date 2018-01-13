@@ -111,4 +111,5 @@ public class UserServiceImpl implements UserService
 		}
 		String s = MD5Util.MD5("1{E4774CDDA0793F86414E8B9140BB6DB4}");
 	}
+
 }

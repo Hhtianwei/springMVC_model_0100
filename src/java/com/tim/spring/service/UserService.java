@@ -16,4 +16,5 @@ public interface UserService
 	SearchResult<UserModel> findUserByPagination(Pagination page);
 
 	void addUsers(int parseInt);
+
 }

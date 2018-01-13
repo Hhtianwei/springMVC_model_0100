@@ -4,9 +4,11 @@
 		 xmlns="http://www.springframework.org/schema/security"
 		 xmlns:p="http://www.springframework.org/schema/p"
 		 xmlns:util="http://www.springframework.org/schema/util"
-		 xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+		 xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+		 xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<http pattern="/ui/**" security="none"/>
 	<http pattern="/index.jsp" security="none"/>
@@ -26,6 +28,9 @@
 		
 		<intercept-url pattern="/smsLogin*" access="permitAll"/>
 		
+		<intercept-url pattern="/oauth/**" access="permitAll"/> 
+		<intercept-url pattern="/testHello" access="permitAll"/>
+		<intercept-url pattern="/testGet" access="permitAll"/>
 		<intercept-url pattern="/testHello2" access="hasRole('ROLE_USER')"/>
 		<intercept-url pattern="/testHello3" access="hasRole('ROLE_ADMIN')"/>
 		

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- 定义客户端用户 （客户端用户名，权限，范围，所能访问的资源，认证类型）-->
+	<!-- <oauth2:client-details-service id="clientDetailsService">
+		<oauth2:client client-id="mobile_1"
+			authorized-grant-types="password,authorization_code,client_credentials,refresh_token,implicit"
+			secret="secret_1"
+			scope="read,write,trust" 
+			resource-ids="mobile-resource,client-resource"
+			authorities="ROLE_OAUTH" 
+			/> -->
+			<!-- autoapprove="" 默认有哪些scope 用逗号分隔，如果有所有scope 用 true 表示 -->
+	<!-- </oauth2:client-details-service> -->
+	
+	<!-- 定义客户端用户 （客户端用户名，权限，范围，所能访问的资源，认证类型） 从数据库里读取-->
+	<b:bean id="clientDetailsService" class="org.springframework.security.oauth2.provider.client.JdbcClientDetailsService">
+		<b:constructor-arg name="dataSource" ref="securityDataSource"/>
+	</b:bean>
+	
+	<!-- 以security 用户管理的方式 管理 client，也当成普通用户 -->
+	<b:bean id="oauth2ClientDetailsUserService"
+		class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+		<b:constructor-arg ref="clientDetailsService" />
+	</b:bean>
+	
+	<!-- oauth2 认证管理器，需要把client当成登录用户进行权限管理 ，所以要加上 user-service-ref 获取用户-->
+	<authentication-manager id="oauth2AuthenticationManager">
+		<authentication-provider user-service-ref="oauth2ClientDetailsUserService" />
+	</authentication-manager>
+
+	<!-- 处理 /oauth/token的业务逻辑 -->
+	<http pattern="/oauth/token" create-session="stateless"
+		authentication-manager-ref="oauth2AuthenticationManager"
+		entry-point-ref="oauth2AuthenticationEntryPoint">
+		<csrf disabled="true" />
+		<intercept-url pattern="/oauth/token" />
+		<anonymous enabled="false" />
+		
+		<http-basic entry-point-ref="oauth2AuthenticationEntryPoint" />
+		
+		<custom-filter ref="clientCredentialsTokenEndpointFilter"
+			before="BASIC_AUTH_FILTER" />
+		
+		<access-denied-handler ref="oauth2AccessDeniedHandler" />
+	</http>
+
+	<!-- token 保存 -->
+	<!-- <b:bean id="tokenStore"
+		class="org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore" /> -->
+		 <!-- <b:bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.JdbcTokenStore">
+			<b:constructor-arg name="dataSource" ref="securityDataSource"/>
+		</b:bean> -->
+		
+		<b:bean id="tokenStore" class="com.tim.spring.oauth2.MyJdbcTokenStore">
+			<b:constructor-arg name="dataSource" ref="securityDataSource"/>
+		</b:bean>
+	
+	
+	
+	<!-- 处理token service 生成新的token,获取旧的token （刷新token）-->
+	<b:bean id="tokenServices"
+		class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
+		<b:property name="tokenStore" ref="tokenStore" />
+		<b:property name="supportRefreshToken" value="true" />
+		<b:property name="accessTokenValiditySeconds" value="3600"></b:property>
+	</b:bean>
+
+	<!-- oauth 服务器response 处理  -->
+	<b:bean id="oauth2AuthenticationEntryPoint"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint" />
+
+	<!-- 服务器拒绝的处理 -->
+	<b:bean id="oauth2AccessDeniedHandler"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
+	
+	<!-- 服务器批准的处理，从服务器取数据  -->
+	<b:bean id="oauthUserApprovalHandler"
+		class="org.springframework.security.oauth2.provider.approval.DefaultUserApprovalHandler" />
+
+	<!-- oauth 决策管理器  好像是用来决定是否授权资源的-->
+	<b:bean id="oauth2AccessDecisionManager"
+		class="org.springframework.security.access.vote.UnanimousBased">
+		<b:constructor-arg>
+			<!-- 自定义  voter-->
+			<b:list>
+				<b:bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter" />
+				<b:bean class="org.springframework.security.access.vote.RoleVoter" />
+				<b:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+				<b:bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+
+	<!-- oauth2 服务，加载一些基础配置信息 -->
+	<oauth2:authorization-server
+		client-details-service-ref="clientDetailsService" 
+		token-services-ref="tokenServices"
+		user-approval-handler-ref="oauthUserApprovalHandler">
+		<oauth2:authorization-code/>
+		<oauth2:implicit/>
+		<oauth2:refresh-token/>
+		<oauth2:client-credentials/>
+		<oauth2:password disabled="false" />
+	</oauth2:authorization-server>
+
+	<!-- oauth 基础的一个filter -->
+	<b:bean id="clientCredentialsTokenEndpointFilter"
+		class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
+		<b:property name="authenticationManager" ref="oauth2AuthenticationManager" />
+	</b:bean>
+	
+	<!-- 资源服务器 -->
+	<oauth2:resource-server id="mobileResourceServer"
+		resource-id="mobile-resource" token-services-ref="tokenServices" />
+
+	<oauth2:resource-server id="clientResourceServer"
+		resource-id="client-resource" token-services-ref="tokenServices" />
+
+	<!-- 资源 -->
+	<http pattern="/order/**" create-session="never"
+		entry-point-ref="oauth2AuthenticationEntryPoint"
+		access-decision-manager-ref="oauth2AccessDecisionManager">
+
+		<!-- 当前父资源下，该资源的权限    必须是有role_oauth 权限的用户才能访问 -->
+		<intercept-url pattern="/order/*" access="hasRole('ROLE_OAUTH')" />
+
+		<anonymous enabled="false"/>
+		<custom-filter ref="mobileResourceServer" before="PRE_AUTH_FILTER" />
+
+		<access-denied-handler ref="oauth2AccessDeniedHandler" />
+	</http>
+
+	<!-- 资源 -->
+	<http pattern="/product/**" create-session="never"
+		entry-point-ref="oauth2AuthenticationEntryPoint"
+		access-decision-manager-ref="oauth2AccessDecisionManager">
+
+		<!-- 如果要加权限，应该在 mobile_1 上进行设置 -->
+		<!-- <intercept-url pattern="/product/*" access="hasRole('ROLE_OAUTH')" /> -->
+
+		<anonymous enabled="false" />
+
+		<custom-filter ref="clientResourceServer" before="PRE_AUTH_FILTER" />
+
+		<access-denied-handler ref="oauth2AccessDeniedHandler" />
+	</http>
+
+</b:beans>
