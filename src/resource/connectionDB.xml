@@ -13,6 +13,7 @@
         http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<context:property-placeholder location="classpath:db.properties"/>
+	
 	<alias name="dataSource" alias="securityDataSource"/>
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close">
@@ -26,7 +27,9 @@
 		<!-- Connection Pooling Info -->
 		<!-- <property name="maxActive" value="${dbcp.maxActive}" /> -->
 		<property name="maxIdle" value="100" />
-		<property name="defaultAutoCommit" value="false" />
+		
+		<!-- 这个值如果设置为false ，jdbcTemplate就不会提交数据，只能进行查询，如果想用jdbcTemplate保存数据，就要把自动事务设置为true -->
+		<property name="defaultAutoCommit" value="true" />
 		<!-- 连接Idle一个小时后超时 -->
 		<property name="timeBetweenEvictionRunsMillis" value="3600000" />
 		<property name="minEvictableIdleTimeMillis" value="3600000" />
@@ -73,6 +76,7 @@
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
 			<tx:method name="add*" propagation="REQUIRED" />
 			<tx:method name="update*" propagation="REQUIRED" />
 			<tx:method name="delete*" propagation="REQUIRED" />

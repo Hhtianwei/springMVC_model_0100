@@ -30,6 +30,7 @@
 		
 		<intercept-url pattern="/oauth/**" access="permitAll"/> 
 		<intercept-url pattern="/testHello" access="permitAll"/>
+		<intercept-url pattern="/testGet" access="permitAll"/>
 		<intercept-url pattern="/testHello2" access="hasRole('ROLE_USER')"/>
 		<intercept-url pattern="/testHello3" access="hasRole('ROLE_ADMIN')"/>
 		

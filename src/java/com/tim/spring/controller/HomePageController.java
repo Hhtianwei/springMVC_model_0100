@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tim.spring.device.data.DeviceData;
+import com.tim.spring.service.UserService;
 import com.tim.spring.service.device.DeviceService;
 
 
@@ -36,6 +37,9 @@ public class HomePageController
 
 	@Resource
 	private DeviceService deviceService;
+
+	@Resource
+	private UserService userService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String index(Model model, HttpServletRequest request, HttpServletResponse response)
@@ -63,7 +67,6 @@ public class HomePageController
 		{
 			//throw new NullPointerException("这是我做测试专门抛出的异常");
 		}
-
 		return name + ",你好";
 	}
 

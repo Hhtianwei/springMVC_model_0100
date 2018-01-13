@@ -13,7 +13,7 @@
  *   xshu       2014-05-28     SSLSocket 链接工具类(用于https)
  * =============================================================================
  */
-package com.tim.spring.oauth2;
+package com.tim.spring.util.http;
 
 import java.io.IOException;
 import java.net.InetAddress;

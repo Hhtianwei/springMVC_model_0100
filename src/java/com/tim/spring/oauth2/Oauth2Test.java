@@ -3,6 +3,8 @@ package com.tim.spring.oauth2;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.tim.spring.util.http.HttpClient;
+
 import net.sf.json.JSONObject;
 
 
@@ -13,8 +15,8 @@ public class Oauth2Test
 	{
 		//String token = getPasswordToken();
 		//String token = getClientToken();
-		String token = getCodeToken();
-		System.out.println("token:" + token);
+		//String token = getCodeToken();
+		//System.out.println("token:" + token);
 		//		String url = "http://localhost:8081/springMVC_model_0100/product/123?access_token=" + token;
 		//		//String url = "http://localhost:8081/springMVC_model_0100/order/123?access_token=" + token;
 		//		HttpClient client = new HttpClient(url, 11111, 11111);
@@ -22,6 +24,25 @@ public class Oauth2Test
 		//		System.out.println(result);
 		//
 		//		System.out.println(URLEncoder.encode("http://localhost:8082/test0200/oauthCallbackServlet"));
+
+		String refreshToken = "f24e0916-8159-4ece-a78b-ebe397c998c9";
+		refreshToken(refreshToken);
+	}
+
+	private static void refreshToken(String token) throws Exception
+	{
+		String url = "http://localhost:8081/springMVC_model_0100/oauth/token";
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("grant_type", "refresh_token");
+		map.put("client_id", "client_1");
+		map.put("client_secret", "d3a70507-859f-46dc-92ce-40ecb20f43e8");
+		map.put("refresh_token", token);
+		HttpClient client = new HttpClient(url, 11111, 11111);
+		client.sendMap(map, "utf-8");
+		String resultString = client.getResult();
+		JSONObject json = JSONObject.fromObject(resultString);
+		System.out.println("authorization_code result:" + json.toString());
+
 	}
 
 	private static String getCodeToken() throws Exception
@@ -29,7 +50,7 @@ public class Oauth2Test
 		String url = "http://localhost:8081/springMVC_model_0100/oauth/token";
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("grant_type", "authorization_code");
-		map.put("code", "lR0Q26");
+		map.put("code", "EO86t8");
 		map.put("client_id", "mobile_1");
 		map.put("redirect_uri", "http%3A%2F%2Flocalhost%3A8082%2Ftest0200%2FoauthCallbackServlet");
 		HttpClient client = new HttpClient(url, 11111, 11111);

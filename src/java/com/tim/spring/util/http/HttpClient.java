@@ -1,4 +1,19 @@
-package com.tim.spring.oauth2;
+/**
+ *
+ * Licensed Property to China UnionPay Co., Ltd.
+ * 
+ * (C) Copyright of China UnionPay Co., Ltd. 2010
+ *     All Rights Reserved.
+ *
+ * 
+ * Modification History:
+ * =============================================================================
+ *   Author         Date          Description
+ *   ------------ ---------- ---------------------------------------------------
+ *   xshu       2014-05-28       HTTP通信工具类
+ * =============================================================================
+ */
+package com.tim.spring.util.http;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -26,7 +41,7 @@ import java.util.zip.ZipFile;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import com.tim.spring.oauth2.BaseHttpSSLSocketFactory.TrustAnyHostnameVerifier;
+import com.tim.spring.util.http.BaseHttpSSLSocketFactory.TrustAnyHostnameVerifier;
 
 
 public class HttpClient
