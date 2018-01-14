@@ -103,8 +103,9 @@
 	<oauth2:authorization-server
 		client-details-service-ref="clientDetailsService" 
 		token-services-ref="tokenServices"
-		user-approval-handler-ref="oauthUserApprovalHandler">
-		<oauth2:authorization-code/>
+		user-approval-handler-ref="oauthUserApprovalHandler"
+		user-approval-page="forward:/oauth/myConfirm_access"><!-- 显示给用户，确认授权的页面，可以是controller里的一个方法 -->
+		<oauth2:authorization-code />
 		<oauth2:implicit/>
 		<oauth2:refresh-token/>
 		<oauth2:client-credentials/>
