@@ -16,7 +16,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			name='authorize' value='我愿意' type='submit' /></label>
 	</form>
 	<form id='denialForm' name='denialForm'
-		action='${path}/oauth/authorize' method='post'>
+		action='<%=path %>/oauth/authorize' method='post'>
 		<input name='user_oauth_approval' value='false' type='hidden' /><input
 			type='hidden' name='${_csrf.parameterName}' value='${_csrf.token}' /><label><input
 			name='deny' value='一边玩去' type='submit' /></label>
